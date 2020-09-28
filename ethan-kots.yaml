@@ -45,7 +45,19 @@ metadata:
 ---
 apiVersion: v1
 data:
-  haSharedSecret: andaY1A3NUhibWozeXh4SA==
+  .dockerconfigjson: eyJhdXRocyI6eyJ0dGwuc2giOnsiYXV0aCI6IllYTmtaanBoWkdZPSJ9fX0=
+kind: Secret
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  creationTimestamp: null
+  name: kotsadm-replicated-registry
+  namespace: test
+type: kubernetes.io/dockerconfigjson
+---
+apiVersion: v1
+data:
+  haSharedSecret: V0hseFNsdjQ5WGpWS2ZuTQ==
 kind: Secret
 metadata:
   annotations:
@@ -148,10 +160,12 @@ spec:
         app: nginx-duplicate
     spec:
       containers:
-      - image: nginxdemos/hello:latest
+      - image: ttl.sh/asdf/hello:latest
         name: nginx
         ports:
         - containerPort: 80
+      imagePullSecrets:
+      - name: kotsadm-replicated-registry
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -173,11 +187,13 @@ spec:
         app: nginx2
     spec:
       containers:
-      - image: k8s.gcr.io/nginx-slim:0.8
+      - image: ttl.sh/asdf/nginx-slim:0.8
         name: nginx
         ports:
         - containerPort: 80
           name: web
+      imagePullSecrets:
+      - name: kotsadm-replicated-registry
       terminationGracePeriodSeconds: 10
 ---
 apiVersion: apps/v1
@@ -220,7 +236,7 @@ spec:
               name: docker-registry-secret
         - name: REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY
           value: /var/lib/registry
-        image: registry:2.7.1
+        image: ttl.sh/asdf/registry:2.7.1
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -239,6 +255,8 @@ spec:
           name: data
         - mountPath: /etc/docker/registry
           name: docker-registry-config
+      imagePullSecrets:
+      - name: kotsadm-replicated-registry
       securityContext:
         fsGroup: 1000
         runAsUser: 1000
@@ -270,10 +288,12 @@ spec:
         app: longimagename
     spec:
       containers:
-      - image: emosbaugh/kafka-prometheus-jmx-exporter:6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e7894
+      - image: ttl.sh/asdf/kafka-prometheus-jmx-exporter:6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e7894
         name: longimagename
         ports:
         - containerPort: 80
+      imagePullSecrets:
+      - name: kotsadm-replicated-registry
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -296,10 +316,12 @@ spec:
         app: nginx-duplicate
     spec:
       containers:
-      - image: nginxdemos/hello:latest
+      - image: ttl.sh/asdf/hello:latest
         name: nginx
         ports:
         - containerPort: 80
+      imagePullSecrets:
+      - name: kotsadm-replicated-registry
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -325,10 +347,12 @@ spec:
       - env:
         - name: TEST
           value: ""
-        image: nginxdemos/hello:latest
+        image: ttl.sh/asdf/hello:latest
         name: nginx
         ports:
         - containerPort: 80
+      imagePullSecrets:
+      - name: kotsadm-replicated-registry
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -352,13 +376,15 @@ spec:
         app: nginx
     spec:
       containers:
-      - image: nginxdemos/hello:latest
+      - image: ttl.sh/asdf/hello:latest
         name: nginx
         ports:
         - containerPort: 80
         volumeMounts:
         - mountPath: /volume-1
           name: pvc-volume
+      imagePullSecrets:
+      - name: kotsadm-replicated-registry
       volumes:
       - name: pvc-volume
         persistentVolumeClaim:
