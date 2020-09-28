@@ -45,7 +45,7 @@ metadata:
 ---
 apiVersion: v1
 data:
-  .dockerconfigjson: eyJhdXRocyI6eyJ0dGwuc2giOnsiYXV0aCI6IllYTmtaanBoWkdZPSJ9fX0=
+  .dockerconfigjson: eyJhdXRocyI6eyJ0dGwuc2giOnsiYXV0aCI6IllYTmtaam9xS2lwSVNVUkVSVTRxS2lvPSJ9fX0=
 kind: Secret
 metadata:
   annotations:
@@ -57,7 +57,7 @@ type: kubernetes.io/dockerconfigjson
 ---
 apiVersion: v1
 data:
-  haSharedSecret: V0hseFNsdjQ5WGpWS2ZuTQ==
+  haSharedSecret: NjdWWGdDVzhGQkd5N1J5YQ==
 kind: Secret
 metadata:
   annotations:
@@ -160,7 +160,7 @@ spec:
         app: nginx-duplicate
     spec:
       containers:
-      - image: ttl.sh/asdf/hello:latest
+      - image: ttl.sh/asdfasdfads/hello:latest
         name: nginx
         ports:
         - containerPort: 80
@@ -187,7 +187,7 @@ spec:
         app: nginx2
     spec:
       containers:
-      - image: ttl.sh/asdf/nginx-slim:0.8
+      - image: ttl.sh/asdfasdfads/nginx-slim:0.8
         name: nginx
         ports:
         - containerPort: 80
@@ -236,7 +236,7 @@ spec:
               name: docker-registry-secret
         - name: REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY
           value: /var/lib/registry
-        image: ttl.sh/asdf/registry:2.7.1
+        image: ttl.sh/asdfasdfads/registry:2.7.1
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -288,7 +288,7 @@ spec:
         app: longimagename
     spec:
       containers:
-      - image: ttl.sh/asdf/kafka-prometheus-jmx-exporter:6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e7894
+      - image: ttl.sh/asdfasdfads/kafka-prometheus-jmx-exporter:6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e7894
         name: longimagename
         ports:
         - containerPort: 80
@@ -316,7 +316,7 @@ spec:
         app: nginx-duplicate
     spec:
       containers:
-      - image: ttl.sh/asdf/hello:latest
+      - image: ttl.sh/asdfasdfads/hello:latest
         name: nginx
         ports:
         - containerPort: 80
@@ -347,7 +347,7 @@ spec:
       - env:
         - name: TEST
           value: ""
-        image: ttl.sh/asdf/hello:latest
+        image: ttl.sh/asdfasdfads/hello:latest
         name: nginx
         ports:
         - containerPort: 80
@@ -376,7 +376,7 @@ spec:
         app: nginx
     spec:
       containers:
-      - image: ttl.sh/asdf/hello:latest
+      - image: ttl.sh/asdfasdfads/hello:latest
         name: nginx
         ports:
         - containerPort: 80
