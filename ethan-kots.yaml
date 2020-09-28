@@ -57,7 +57,7 @@ type: kubernetes.io/dockerconfigjson
 ---
 apiVersion: v1
 data:
-  haSharedSecret: QllxMXRUcDFGUGFyVGRwbA==
+  haSharedSecret: a3p2NElJQkFPT1A5RnFJQw==
 kind: Secret
 metadata:
   annotations:
@@ -266,34 +266,6 @@ spec:
       - configMap:
           name: docker-registry-config
         name: docker-registry-config
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations:
-    kots.io/app-slug: ethan-kots
-  labels:
-    app: longimagename
-  name: longimagename
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: longimagename
-  template:
-    metadata:
-      annotations:
-        kots.io/app-slug: ethan-kots
-      labels:
-        app: longimagename
-    spec:
-      containers:
-      - image: ttl.sh/asdfasdfads/kafka-prometheus-jmx-exporter:6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e7894
-        name: longimagename
-        ports:
-        - containerPort: 80
-      imagePullSecrets:
-      - name: kotsadm-replicated-registry
 ---
 apiVersion: apps/v1
 kind: Deployment
