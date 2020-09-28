@@ -57,7 +57,7 @@ type: kubernetes.io/dockerconfigjson
 ---
 apiVersion: v1
 data:
-  haSharedSecret: emlOVzRKOGpJc21abWpDMw==
+  haSharedSecret: c2pPR3hlOUt0U0Nta2ozcw==
 kind: Secret
 metadata:
   annotations:
