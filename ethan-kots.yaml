@@ -1,0 +1,391 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  name: another
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  name: namespace2
+---
+apiVersion: v1
+data:
+  config.yml: |-
+    health:
+      storagedriver:
+        enabled: true
+        interval: 10s
+        threshold: 3
+    http:
+      addr: :5000
+      headers:
+        X-Content-Type-Options:
+        - nosniff
+    log:
+      fields:
+        service: registry
+    storage:
+      cache:
+        blobdescriptor: inmemory
+    version: 0.1
+kind: ConfigMap
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    app: docker-registry
+    chart: docker-registry-1.9.3
+    heritage: Tiller
+    release: docker-registry
+  name: docker-registry-config
+---
+apiVersion: v1
+data:
+  haSharedSecret: andaY1A3NUhibWozeXh4SA==
+kind: Secret
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    app: docker-registry
+    chart: docker-registry-1.9.3
+    heritage: Tiller
+    release: docker-registry
+  name: docker-registry-secret
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    app: nginx
+  name: nginx-test
+  namespace: namespace2
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  selector:
+    app: nginx
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    app: docker-registry
+    chart: docker-registry-1.9.3
+    heritage: Tiller
+    release: docker-registry
+  name: docker-registry
+spec:
+  ports:
+  - name: registry
+    port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: docker-registry
+    release: docker-registry
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  name: nginx-service-test
+spec:
+  ports:
+  - port: 80
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  selector:
+    app: nginx
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    app: nginx-duplicate
+  name: nginx-duplicate-changeme
+  namespace: another
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-duplicate
+  template:
+    metadata:
+      annotations:
+        kots.io/app-slug: ethan-kots
+      labels:
+        app: nginx-duplicate
+    spec:
+      containers:
+      - image: nginxdemos/hello:latest
+        name: nginx
+        ports:
+        - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  name: web2
+  namespace: another
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx2
+  template:
+    metadata:
+      annotations:
+        kots.io/app-slug: ethan-kots
+      labels:
+        app: nginx2
+    spec:
+      containers:
+      - image: k8s.gcr.io/nginx-slim:0.8
+        name: nginx
+        ports:
+        - containerPort: 80
+          name: web
+      terminationGracePeriodSeconds: 10
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    app: docker-registry
+    chart: docker-registry-1.9.3
+    heritage: Tiller
+    release: docker-registry
+  name: docker-registry
+spec:
+  minReadySeconds: 5
+  replicas: 1
+  selector:
+    matchLabels:
+      app: docker-registry
+      release: docker-registry
+  template:
+    metadata:
+      annotations:
+        checksum/config: d468581c578e9a2bd44751e4e796257fe7401f6b23ec25f0b3d3c4de4254d25e
+        kots.io/app-slug: ethan-kots
+      labels:
+        app: docker-registry
+        release: docker-registry
+    spec:
+      containers:
+      - command:
+        - /bin/registry
+        - serve
+        - /etc/docker/registry/config.yml
+        env:
+        - name: REGISTRY_HTTP_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: haSharedSecret
+              name: docker-registry-secret
+        - name: REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY
+          value: /var/lib/registry
+        image: registry:2.7.1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 5000
+        name: docker-registry
+        ports:
+        - containerPort: 5000
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5000
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/lib/registry/
+          name: data
+        - mountPath: /etc/docker/registry
+          name: docker-registry-config
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+      volumes:
+      - emptyDir: {}
+        name: data
+      - configMap:
+          name: docker-registry-config
+        name: docker-registry-config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    app: longimagename
+  name: longimagename
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: longimagename
+  template:
+    metadata:
+      annotations:
+        kots.io/app-slug: ethan-kots
+      labels:
+        app: longimagename
+    spec:
+      containers:
+      - image: emosbaugh/kafka-prometheus-jmx-exporter:6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e7894
+        name: longimagename
+        ports:
+        - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    app: nginx-duplicate
+  name: nginx-duplicate
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-duplicate
+  template:
+    metadata:
+      annotations:
+        kots.io/app-slug: ethan-kots
+      labels:
+        app: nginx-duplicate
+    spec:
+      containers:
+      - image: nginxdemos/hello:latest
+        name: nginx
+        ports:
+        - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    app: nginx-2
+  name: nginx-test-2
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-2
+  template:
+    metadata:
+      annotations:
+        kots.io/app-slug: ethan-kots
+      labels:
+        app: nginx-2
+    spec:
+      containers:
+      - env:
+        - name: TEST
+          value: ""
+        image: nginxdemos/hello:latest
+        name: nginx
+        ports:
+        - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      annotations:
+        backup.velero.io/backup-volumes: pvc-volume
+        kots.io/app-slug: ethan-kots
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginxdemos/hello:latest
+        name: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: /volume-1
+          name: pvc-volume
+      volumes:
+      - name: pvc-volume
+        persistentVolumeClaim:
+          claimName: test-volume-claim
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  name: myreallybigclaim
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 400Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  name: test-volume-claim
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 8Gi
