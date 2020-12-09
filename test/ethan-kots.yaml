@@ -1,0 +1,315 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+  name: another
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+  name: namespace2
+---
+apiVersion: v1
+data:
+  .dockerconfigjson: eyJhdXRocyI6eyJwcm94eS5yZXBsaWNhdGVkLmNvbSI6eyJhdXRoIjoiZDBoUkxWZHRlbVZRTUZab1JrbE1aVXRHVXpOcWJsRmtTalpvU0ZkSFRuQTZkMGhSTFZkdGVtVlFNRlpvUmtsTVpVdEdVek5xYmxGa1NqWm9TRmRIVG5BPSJ9LCJyZWdpc3RyeS5yZXBsaWNhdGVkLmNvbSI6eyJhdXRoIjoiZDBoUkxWZHRlbVZRTUZab1JrbE1aVXRHVXpOcWJsRmtTalpvU0ZkSFRuQTZkMGhSTFZkdGVtVlFNRlpvUmtsTVpVdEdVek5xYmxGa1NqWm9TRmRIVG5BPSJ9fX0=
+kind: Secret
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  creationTimestamp: null
+  labels:
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+  name: kotsadm-replicated-registry
+  namespace: test
+type: kubernetes.io/dockerconfigjson
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    app: nginx
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+  name: nginx-test
+  namespace: namespace2
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  selector:
+    app: nginx
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    app: nginx
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+  name: nginx
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  selector:
+    app: nginx
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+  name: nginx-service-test
+spec:
+  ports:
+  - port: 80
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    app: nginx-duplicate
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+  name: nginx-duplicate-changeme
+  namespace: another
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-duplicate
+  template:
+    metadata:
+      annotations:
+        kots.io/app-slug: ethan-kots
+      labels:
+        app: nginx-duplicate
+        kots.io/app-slug: ethan-kots
+        kots.io/backup: velero
+    spec:
+      containers:
+      - image: nginxdemos/hello:latest
+        name: nginx
+        ports:
+        - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+  name: web2
+  namespace: another
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx2
+  template:
+    metadata:
+      annotations:
+        kots.io/app-slug: ethan-kots
+      labels:
+        app: nginx2
+        kots.io/app-slug: ethan-kots
+        kots.io/backup: velero
+    spec:
+      containers:
+      - image: k8s.gcr.io/nginx-slim:0.8
+        name: nginx
+        ports:
+        - containerPort: 80
+          name: web
+      terminationGracePeriodSeconds: 10
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    app: nginx
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      annotations:
+        backup.velero.io/backup-volumes: pvc-volume
+        kots.io/app-slug: ethan-kots
+      labels:
+        app: nginx
+        kots.io/app-slug: ethan-kots
+        kots.io/backup: velero
+    spec:
+      containers:
+      - image: nginxdemos/hello:latest
+        name: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: /volume-1
+          name: pvc-volume
+      volumes:
+      - name: pvc-volume
+        persistentVolumeClaim:
+          claimName: test-volume-claim
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    app: nginx-duplicate
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+  name: nginx-duplicate
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-duplicate
+  template:
+    metadata:
+      annotations:
+        kots.io/app-slug: ethan-kots
+      labels:
+        app: nginx-duplicate
+        kots.io/app-slug: ethan-kots
+        kots.io/backup: velero
+    spec:
+      containers:
+      - image: nginxdemos/hello:latest
+        name: nginx
+        ports:
+        - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    app: nginx-dynamic
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+  name: nginx-dynamic
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-dynamic
+  template:
+    metadata:
+      annotations:
+        kots.io/app-slug: ethan-kots
+      labels:
+        app: nginx-dynamic
+        kots.io/app-slug: ethan-kots
+        kots.io/backup: velero
+    spec:
+      containers:
+      - image: proxy.replicated.com/proxy/ethan-kots/gcr.io/replicated-qa/ethan-test/nginx:1.19
+        name: nginx-dynamic
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: kotsadm-replicated-registry
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    app: nginx-2
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+  name: nginx-test-2
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-2
+  template:
+    metadata:
+      annotations:
+        kots.io/app-slug: ethan-kots
+      labels:
+        app: nginx-2
+        kots.io/app-slug: ethan-kots
+        kots.io/backup: velero
+    spec:
+      containers:
+      - env:
+        - name: TEST
+          value: ""
+        image: nginxdemos/hello:latest
+        name: nginx
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+  name: myreallybigclaim
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 400Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+  name: test-volume-claim
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 8Gi
