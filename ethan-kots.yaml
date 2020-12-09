@@ -3,82 +3,37 @@ kind: Namespace
 metadata:
   annotations:
     kots.io/app-slug: ethan-kots
-  name: another
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  annotations:
-    kots.io/app-slug: ethan-kots
-  name: namespace2
----
-apiVersion: v1
-data:
-  config.yml: |-
-    health:
-      storagedriver:
-        enabled: true
-        interval: 10s
-        threshold: 3
-    http:
-      addr: :5000
-      headers:
-        X-Content-Type-Options:
-        - nosniff
-    log:
-      fields:
-        service: registry
-    storage:
-      cache:
-        blobdescriptor: inmemory
-    version: 0.1
-kind: ConfigMap
-metadata:
-  annotations:
-    kots.io/app-slug: ethan-kots
   labels:
-    app: docker-registry
-    chart: docker-registry-1.9.3
-    heritage: Tiller
-    release: docker-registry
-  name: docker-registry-config
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+  name: test
 ---
 apiVersion: v1
 data:
-  .dockerconfigjson: eyJhdXRocyI6eyJ0dGwuc2giOnsiYXV0aCI6IllYTmtaanBoWkdZPSJ9fX0=
+  .dockerconfigjson: eyJhdXRocyI6eyJwcm94eS5zdGFnaW5nLnJlcGxpY2F0ZWQuY29tIjp7ImF1dGgiOiJXbU5sVEd0eVpEQjVUVGxVYzNBemFGbFpTbmhwZDFvMUxXaHdSbEJHYkRNNldtTmxUR3R5WkRCNVRUbFVjM0F6YUZsWlNuaHBkMW8xTFdod1JsQkdiRE09In0sInJlZ2lzdHJ5LnN0YWdpbmcucmVwbGljYXRlZC5jb20iOnsiYXV0aCI6IldtTmxUR3R5WkRCNVRUbFVjM0F6YUZsWlNuaHBkMW8xTFdod1JsQkdiRE02V21ObFRHdHlaREI1VFRsVWMzQXphRmxaU25ocGQxbzFMV2h3UmxCR2JETT0ifX19
 kind: Secret
 metadata:
   annotations:
     kots.io/app-slug: ethan-kots
   creationTimestamp: null
+  labels:
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
   name: kotsadm-replicated-registry
-  namespace: test
+  namespace: default
 type: kubernetes.io/dockerconfigjson
 ---
 apiVersion: v1
-data:
-  haSharedSecret: c2pPR3hlOUt0U0Nta2ozcw==
-kind: Secret
-metadata:
-  annotations:
-    kots.io/app-slug: ethan-kots
-  labels:
-    app: docker-registry
-    chart: docker-registry-1.9.3
-    heritage: Tiller
-    release: docker-registry
-  name: docker-registry-secret
-type: Opaque
----
-apiVersion: v1
 kind: Service
 metadata:
   annotations:
     kots.io/app-slug: ethan-kots
   labels:
     app: nginx
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
   name: nginx-test
-  namespace: namespace2
+  namespace: test
 spec:
   ports:
   - name: http
@@ -94,237 +49,33 @@ metadata:
   annotations:
     kots.io/app-slug: ethan-kots
   labels:
-    app: docker-registry
-    chart: docker-registry-1.9.3
-    heritage: Tiller
-    release: docker-registry
-  name: docker-registry
+    app: nginx
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+  name: nginx
 spec:
   ports:
-  - name: registry
-    port: 5000
-    protocol: TCP
-    targetPort: 5000
+  - name: http
+    port: 80
+    targetPort: 80
   selector:
-    app: docker-registry
-    release: docker-registry
-  type: ClusterIP
+    app: nginx
+  type: NodePort
 ---
 apiVersion: v1
 kind: Service
 metadata:
   annotations:
     kots.io/app-slug: ethan-kots
+  labels:
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
   name: nginx-service-test
 spec:
+  externalName: nginx-test.test.svc.cluster.local
   ports:
   - port: 80
-  type: NodePort
----
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    kots.io/app-slug: ethan-kots
-  labels:
-    app: nginx
-  name: nginx
-spec:
-  ports:
-  - name: http
-    port: 80
-    targetPort: 80
-  selector:
-    app: nginx
-  type: NodePort
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations:
-    kots.io/app-slug: ethan-kots
-  labels:
-    app: nginx-duplicate
-  name: nginx-duplicate-changeme
-  namespace: another
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: nginx-duplicate
-  template:
-    metadata:
-      annotations:
-        kots.io/app-slug: ethan-kots
-      labels:
-        app: nginx-duplicate
-    spec:
-      containers:
-      - image: ttl.sh/asdfasdfads/hello:latest
-        name: nginx
-        ports:
-        - containerPort: 80
-      imagePullSecrets:
-      - name: kotsadm-replicated-registry
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations:
-    kots.io/app-slug: ethan-kots
-  name: web2
-  namespace: another
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: nginx2
-  template:
-    metadata:
-      annotations:
-        kots.io/app-slug: ethan-kots
-      labels:
-        app: nginx2
-    spec:
-      containers:
-      - image: ttl.sh/asdfasdfads/nginx-slim:0.8
-        name: nginx
-        ports:
-        - containerPort: 80
-          name: web
-      imagePullSecrets:
-      - name: kotsadm-replicated-registry
-      terminationGracePeriodSeconds: 10
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations:
-    kots.io/app-slug: ethan-kots
-  labels:
-    app: docker-registry
-    chart: docker-registry-1.9.3
-    heritage: Tiller
-    release: docker-registry
-  name: docker-registry
-spec:
-  minReadySeconds: 5
-  replicas: 1
-  selector:
-    matchLabels:
-      app: docker-registry
-      release: docker-registry
-  template:
-    metadata:
-      annotations:
-        checksum/config: d468581c578e9a2bd44751e4e796257fe7401f6b23ec25f0b3d3c4de4254d25e
-        kots.io/app-slug: ethan-kots
-      labels:
-        app: docker-registry
-        release: docker-registry
-    spec:
-      containers:
-      - command:
-        - /bin/registry
-        - serve
-        - /etc/docker/registry/config.yml
-        env:
-        - name: REGISTRY_HTTP_SECRET
-          valueFrom:
-            secretKeyRef:
-              key: haSharedSecret
-              name: docker-registry-secret
-        - name: REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY
-          value: /var/lib/registry
-        image: ttl.sh/asdfasdfads/registry:2.7.1
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 5000
-        name: docker-registry
-        ports:
-        - containerPort: 5000
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 5000
-        resources: {}
-        volumeMounts:
-        - mountPath: /var/lib/registry/
-          name: data
-        - mountPath: /etc/docker/registry
-          name: docker-registry-config
-      imagePullSecrets:
-      - name: kotsadm-replicated-registry
-      securityContext:
-        fsGroup: 1000
-        runAsUser: 1000
-      volumes:
-      - emptyDir: {}
-        name: data
-      - configMap:
-          name: docker-registry-config
-        name: docker-registry-config
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations:
-    kots.io/app-slug: ethan-kots
-  labels:
-    app: nginx-duplicate
-  name: nginx-duplicate
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: nginx-duplicate
-  template:
-    metadata:
-      annotations:
-        kots.io/app-slug: ethan-kots
-      labels:
-        app: nginx-duplicate
-    spec:
-      containers:
-      - image: ttl.sh/asdfasdfads/hello:latest
-        name: nginx
-        ports:
-        - containerPort: 80
-      imagePullSecrets:
-      - name: kotsadm-replicated-registry
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations:
-    kots.io/app-slug: ethan-kots
-  labels:
-    app: nginx-2
-  name: nginx-test-2
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: nginx-2
-  template:
-    metadata:
-      annotations:
-        kots.io/app-slug: ethan-kots
-      labels:
-        app: nginx-2
-    spec:
-      containers:
-      - env:
-        - name: TEST
-          value: ""
-        image: ttl.sh/asdfasdfads/hello:latest
-        name: nginx
-        ports:
-        - containerPort: 80
-      imagePullSecrets:
-      - name: kotsadm-replicated-registry
+  type: ExternalName
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -333,57 +84,91 @@ metadata:
     kots.io/app-slug: ethan-kots
   labels:
     app: nginx
-  name: nginx
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+  name: nginx-test
+  namespace: test
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: nginx
   template:
     metadata:
       annotations:
-        backup.velero.io/backup-volumes: pvc-volume
         kots.io/app-slug: ethan-kots
       labels:
         app: nginx
+        kots.io/app-slug: ethan-kots
+        kots.io/backup: velero
     spec:
       containers:
-      - image: ttl.sh/asdfasdfads/hello:latest
+      - image: nginxdemos/hello:latest
         name: nginx
         ports:
         - containerPort: 80
-        volumeMounts:
-        - mountPath: /volume-1
-          name: pvc-volume
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  labels:
+    app: nginx
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+  name: nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      annotations:
+        kots.io/app-slug: ethan-kots
+      labels:
+        app: nginx
+        kots.io/app-slug: ethan-kots
+        kots.io/backup: velero
+    spec:
+      containers:
+      - image: proxy.staging.replicated.com/proxy/ethan-kots/ethanreg.azurecr.io/nginxdemos/hello:latest
+        name: nginx
+        ports:
+        - containerPort: 80
       imagePullSecrets:
       - name: kotsadm-replicated-registry
-      volumes:
-      - name: pvc-volume
-        persistentVolumeClaim:
-          claimName: test-volume-claim
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
+apiVersion: extensions/v1beta1
+kind: Ingress
 metadata:
   annotations:
+    blah: blahqew
     kots.io/app-slug: ethan-kots
-  name: myreallybigclaim
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 400Gi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  annotations:
+    kots.io/exclude: "false"
+    kots.io/placeholder: "true"
+    kubernetes.io/ingress.allow-http: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+  labels:
+    app: nginx
     kots.io/app-slug: ethan-kots
-  name: test-volume-claim
+    kots.io/backup: velero
+  name: nginx
 spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 8Gi
+  rules:
+  - host: example.com
+    http:
+      paths:
+      - backend:
+          serviceName: nginx
+          servicePort: 80
+        path: /
+      - backend:
+          serviceName: nginx-service-test
+          servicePort: 80
+        path: /test/
+  tls:
+  - hosts:
+    - example.com
+    secretName: kotsadm-tls
