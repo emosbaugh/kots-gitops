@@ -34,6 +34,54 @@ metadata:
 type: kubernetes.io/dockerconfigjson
 ---
 apiVersion: v1
+data:
+  dexConfig.yaml: Y29ubmVjdG9yczoKLSBjb25maWc6CiAgICBiYXNpY0F1dGhVbnN1cHBvcnRlZDogbnVsbAogICAgY2xhaW1NYXBwaW5nOgogICAgICBlbWFpbDogIiIKICAgICAgZ3JvdXBzOiAiIgogICAgICBwcmVmZXJyZWRfdXNlcm5hbWU6ICIiCiAgICBjbGllbnRJRDogMG9hMWJ6bnM3V3BicEwxYkw1ZDYKICAgIGNsaWVudFNlY3JldDogM2Z6ZDdqaTc1MXpBdmtGSG9WM0E1ekFrVzR2ZUJPZ2tMaGplQ3ZQZQogICAgZ2V0VXNlckluZm86IHRydWUKICAgIGhvc3RlZERvbWFpbnM6IG51bGwKICAgIGluc2VjdXJlRW5hYmxlR3JvdXBzOiB0cnVlCiAgICBpbnNlY3VyZVNraXBFbWFpbFZlcmlmaWVkOiB0cnVlCiAgICBpc3N1ZXI6IGh0dHBzOi8vcmVwbGljYXRlZHRlc3Qub2t0YS5jb20KICAgIHByb21wdFR5cGU6ICIiCiAgICByZWRpcmVjdFVSSTogaHR0cDovL215YXBwLmtvdHNhZG1kZXZlbnYuY29tL2RleC9jYWxsYmFjawogICAgc2NvcGVzOgogICAgLSBvcGVuaWQKICAgIC0gZW1haWwKICAgIC0gZ3JvdXBzCiAgICB1c2VySURLZXk6ICIiCiAgICB1c2VyTmFtZUtleTogZW1haWwKICBpZDogb2t0YQogIG5hbWU6IE9rdGEKICB0eXBlOiBvaWRjCmVuYWJsZVBhc3N3b3JkREI6IGZhbHNlCmV4cGlyeToKICBhdXRoUmVxdWVzdHM6ICIiCiAgZGV2aWNlUmVxdWVzdHM6ICIiCiAgaWRUb2tlbnM6ICIiCiAgc2lnbmluZ0tleXM6ICIiCmZyb250ZW5kOgogIERpcjogIiIKICBFeHRyYTogbnVsbAogIElzc3VlcjogS09UUwogIExvZ29VUkw6ICIiCiAgVGhlbWU6ICIiCmdycGM6CiAgYWRkcjogIiIKICByZWZsZWN0aW9uOiBmYWxzZQogIHRsc0NlcnQ6ICIiCiAgdGxzQ2xpZW50Q0E6ICIiCiAgdGxzS2V5OiAiIgppc3N1ZXI6IGh0dHA6Ly9teWFwcC5rb3RzYWRtZGV2ZW52LmNvbS9kZXgKbG9nZ2VyOgogIGZvcm1hdDogIiIKICBsZXZlbDogIiIKb2F1dGgyOgogIGFsd2F5c1Nob3dMb2dpblNjcmVlbjogZmFsc2UKICBwYXNzd29yZENvbm5lY3RvcjogIiIKICByZXNwb25zZVR5cGVzOiBudWxsCiAgc2tpcEFwcHJvdmFsU2NyZWVuOiB0cnVlCnN0YXRpY0NsaWVudHM6Ci0gaWQ6IGtvdHNhZG0KICBpZEVudjogIiIKICBsb2dvVVJMOiAiIgogIG5hbWU6IGtvdHNhZG0KICBwdWJsaWM6IGZhbHNlCiAgcmVkaXJlY3RVUklzOgogIC0gaHR0cDovL3t7cmVwbCBDb25maWdPcHRpb24gImhvc3RuYW1lIn19L29pZGMvY2FsbGJhY2sKICBzZWNyZXQ6ICIiCiAgc2VjcmV0RW52OiBERVhfQ0xJRU5UX1NFQ1JFVAogIHRydXN0ZWRQZWVyczogbnVsbApzdGF0aWNQYXNzd29yZHM6IG51bGwKc3RvcmFnZToKICBjb25maWc6CiAgICBDb25uTWF4TGlmZXRpbWU6IDAKICAgIENvbm5lY3Rpb25UaW1lb3V0OiAwCiAgICBEYXRhYmFzZTogIiIKICAgIEhvc3Q6ICIiCiAgICBNYXhJZGxlQ29ubnM6IDAKICAgIE1heE9wZW5Db25uczogMAogICAgUGFzc3dvcmQ6ICIiCiAgICBQb3J0OiAwCiAgICBVc2VyOiAiIgogICAgc3NsOgogICAgICBDQUZpbGU6ICIiCiAgICAgIENlcnRGaWxlOiAiIgogICAgICBLZXlGaWxlOiAiIgogICAgICBNb2RlOiBkaXNhYmxlCiAgdHlwZTogcG9zdGdyZXMKdGVsZW1ldHJ5OgogIGh0dHA6ICIiCndlYjoKICBhbGxvd2VkT3JpZ2luczogbnVsbAogIGh0dHA6IDAuMC4wLjA6NTU1NgogIGh0dHBzOiAiIgogIHRsc0NlcnQ6ICIiCiAgdGxzS2V5OiAiIgo=
+kind: Secret
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  creationTimestamp: null
+  labels:
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+    kots.io/identity: ethan-kots
+    kots.io/kotsadm: "true"
+  name: ethan-kots-dex
+---
+apiVersion: v1
+data:
+  DEX_CLIENT_SECRET: MWxXamhzR3NURDRHQ2gzNDdFWXZ2MXJRTm00
+kind: Secret
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  creationTimestamp: null
+  labels:
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+    kots.io/identity: ethan-kots
+    kots.io/kotsadm: "true"
+  name: ethan-kots-dex-client
+---
+apiVersion: v1
+data:
+  PGDATABASE: ZXRoYW4ta290cy1kZXg=
+  PGHOST: a290c2FkbS1wb3N0Z3Jlcw==
+  PGPASSWORD: MWxXamhyb3NNc3U2TnNSeEsyQkVSM0pERVV3
+  PGUSER: ZXRoYW4ta290cy1kZXg=
+kind: Secret
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  creationTimestamp: null
+  labels:
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+    kots.io/identity: ethan-kots
+    kots.io/kotsadm: "true"
+  name: ethan-kots-dex-postgres
+---
+apiVersion: v1
 kind: Service
 metadata:
   annotations:
@@ -52,6 +100,29 @@ spec:
   selector:
     app: nginx
   type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  creationTimestamp: null
+  labels:
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+    kots.io/identity: ethan-kots
+    kots.io/kotsadm: "true"
+  name: ethan-kots-dex
+spec:
+  ports:
+  - name: http
+    port: 5556
+    targetPort: 5556
+  selector:
+    app: ethan-kots-dex
+  type: ClusterIP
+status:
+  loadBalancer: {}
 ---
 apiVersion: v1
 kind: Service
@@ -148,6 +219,78 @@ spec:
         - containerPort: 80
           name: web
       terminationGracePeriodSeconds: 10
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+  creationTimestamp: null
+  labels:
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+    kots.io/identity: ethan-kots
+    kots.io/kotsadm: "true"
+  name: ethan-kots-dex
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ethan-kots-dex
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kots.io/app-slug: ethan-kots
+        kots.io/dex-secret-checksum: ef11b1e352fd3b5bdca67b8d4a87db2a
+      creationTimestamp: null
+      labels:
+        app: ethan-kots-dex
+        kots.io/app-slug: ethan-kots
+        kots.io/backup: velero
+    spec:
+      containers:
+      - command:
+        - /usr/local/bin/dex
+        - serve
+        - /etc/dex/cfg/dexConfig.yaml
+        env:
+        - name: DEX_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: DEX_CLIENT_SECRET
+              name: ethan-kots-dex-client
+        envFrom:
+        - secretRef:
+            name: ethan-kots-dex-postgres
+        image: quay.io/dexidp/dex:v2.26.0
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /dex/healthz
+            port: 5556
+        name: dex
+        ports:
+        - containerPort: 5556
+          name: http
+        readinessProbe:
+          httpGet:
+            path: /dex/healthz
+            port: 5556
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 50Mi
+        volumeMounts:
+        - mountPath: /etc/dex/cfg
+          name: config
+      volumes:
+      - name: config
+        secret:
+          secretName: ethan-kots-dex
+status: {}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -313,3 +456,28 @@ spec:
   resources:
     requests:
       storage: 8Gi
+---
+apiVersion: v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kots.io/app-slug: ethan-kots
+    nginx.ingress.kubernetes.io/proxy-body-size: 100m
+  creationTimestamp: null
+  labels:
+    kots.io/app-slug: ethan-kots
+    kots.io/backup: velero
+    kots.io/identity: ethan-kots
+    kots.io/kotsadm: "true"
+  name: ethan-kots-dex
+spec:
+  rules:
+  - host: myapp.kotsadmdevenv.com
+    http:
+      paths:
+      - backend:
+          serviceName: ethan-kots-dex
+          servicePort: 5556
+        path: /
+status:
+  loadBalancer: {}
